@@ -29,6 +29,7 @@ namespace EmployeesPairWork.Web.Controllers
         public async Task<IActionResult> Index(FileInputModel input)
         {
             List<CsvMappingModel> result = await _fileService.GetAllRowsFromFile(input);
+
             return View();
         }
 
