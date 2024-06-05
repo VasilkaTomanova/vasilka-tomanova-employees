@@ -6,4 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="32.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EmployeesPairWork.Models\EmployeesPairWork.Models.csproj" />
+    <ProjectReference Include="..\EmployeesPairWork.Services\EmployeesPairWork.Services.csproj" />
+  </ItemGroup>
+
 </Project>
