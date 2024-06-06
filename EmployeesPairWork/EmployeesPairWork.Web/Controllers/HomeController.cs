@@ -33,13 +33,18 @@ namespace EmployeesPairWork.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(FileInputModel input)
         {
-            List<CsvMappingModel> fileResult = await _fileService.GetAllRowsFromFile(input);
-            List<PairViewModel> viewResult = await _renderService.GetFilteredEmpoyees(fileResult);
-            input.Employees = viewResult;
-            
-             
-
-            return View(input);
+            try
+            {
+                List<CsvMappingModel> fileResult = await _fileService.GetAllRowsFromFile(input);
+                List<PairViewModel> viewResult = await _renderService.GetFilteredEmpoyees(fileResult);
+                input.Employees = viewResult;
+                return View(input);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction(nameof(HomeController.Error));
+            }
+          
         }
 
 
