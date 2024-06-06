@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IFileReaderService, FileReaderService>();
+builder.Services.AddTransient<IRenderViewService, RenderViewService>();
 
 
 var app = builder.Build();

@@ -6,6 +6,7 @@ using EmployeesPairWork.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Globalization;
+using System.Web.Helpers;
 
 namespace EmployeesPairWork.Web.Controllers
 {
@@ -13,12 +14,16 @@ namespace EmployeesPairWork.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IFileReaderService _fileService;
-        public HomeController(ILogger<HomeController> logger, IFileReaderService fileService)
+        private readonly IRenderViewService _renderService;
+
+        public HomeController(ILogger<HomeController> logger, IFileReaderService fileService, IRenderViewService renderService)
         {
             _logger = logger;
-            _fileService = fileService; 
+            _fileService = fileService;
+            _renderService = renderService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
@@ -28,16 +33,17 @@ namespace EmployeesPairWork.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(FileInputModel input)
         {
-            List<CsvMappingModel> result = await _fileService.GetAllRowsFromFile(input);
+            List<CsvMappingModel> fileResult = await _fileService.GetAllRowsFromFile(input);
+            List<PairViewModel> viewResult = await _renderService.GetFilteredEmpoyees(fileResult);
+            input.Employees = viewResult;
+            
+             
 
-            return View();
+            return View(input);
         }
 
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

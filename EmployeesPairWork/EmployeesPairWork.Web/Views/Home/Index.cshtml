@@ -11,12 +11,44 @@
             <div class="col-2">
             </div>
             <div class="col-4">
-                <input class="form-control" type="file"    asp-for="FormFile">
+                <input class="form-control" type="file" asp-for="FormFile">
             </div>
             <div class="col-4" style="margin-left:-10px">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </form>
+    <div>
+        @if (Model != null && Model.Employees != null && Model.Employees.Count != 0)
+        {
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Employees.First().FirstEmployee)</th>
+                        <th>@Html.DisplayNameFor(model => model.Employees.First().SecondEmployee)</th>
+                        <th>@Html.DisplayNameFor(model => model.Employees.First().CommonProjects.First().ProjectID)</th>
+                        <th>@Html.DisplayNameFor(model => model.Employees.First().CommonProjects.First().CommonWorkDuration)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in @Model.Employees)
+                    {
+                        @foreach (var item2 in item.CommonProjects)
+                        {
+                            <tr>
+                                <td>@item.FirstEmployee</td>
+                                <td>@item.SecondEmployee</td>
+                                <td>@item2.ProjectID</td>
+                                <td>@item2.CommonWorkDuration</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        }
+
+    </div>
 
 </div>
