@@ -15,7 +15,6 @@ namespace EmployeesPairWork.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IFileReaderService _fileService;
         private readonly IRenderViewService _renderService;
-
         public HomeController(ILogger<HomeController> logger, IFileReaderService fileService, IRenderViewService renderService)
         {
             _logger = logger;
@@ -28,7 +27,6 @@ namespace EmployeesPairWork.Web.Controllers
         {
             return View();
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Index(FileInputModel input)
@@ -46,9 +44,6 @@ namespace EmployeesPairWork.Web.Controllers
             }
           
         }
-
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

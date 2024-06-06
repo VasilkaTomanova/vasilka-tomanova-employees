@@ -6,14 +6,11 @@ namespace EmployeesPairWork.Services
 {
     public class RenderViewService : IRenderViewService
     {
-
         public async Task<List<PairViewModel>> GetFilteredEmpoyees(List<CsvMappingModel> inputCollection)
         {
             List<PairViewModel> filteredEMployees = await FilterPairProjectEmployees(inputCollection);
             return filteredEMployees;
         }
-
-
 
         /// <summary>
         /// Filter aleady readed from file employees by project and time
@@ -24,10 +21,10 @@ namespace EmployeesPairWork.Services
         {
             var groupedByProject = employeesFromFile.GroupBy(p => p.ProjectID, (key, g) =>
                                                     new { ProjectID = key, ProjectEmployees = g.ToList() })
+                                                    .Where(x=>x.ProjectEmployees.Count >= Constants.MinValueForPair)
                                                     .ToList();
 
             List<PairViewModel> filteredEMployees = new List<PairViewModel>();
-
             foreach (var currProject in groupedByProject)
             {
                 for (int i = 0; i < currProject.ProjectEmployees.Count; i++)
@@ -61,9 +58,7 @@ namespace EmployeesPairWork.Services
                         });
                     }
                 }
-
             }
-
             return filteredEMployees;
         }
 
@@ -77,11 +72,12 @@ namespace EmployeesPairWork.Services
         private async Task<int> HasWorkAtSameTime(CsvMappingModel firstEmployee, CsvMappingModel secondEmployee)
         {
             DateTime firstEmployeeDateFrom = DateTime.Parse(firstEmployee.DateFrom);
-            DateTime firstEmployeeDateTo = firstEmployee.DateTo != "" ? DateTime.Parse(firstEmployee.DateTo) : DateTime.UtcNow;
+            DateTime firstEmployeeDateTo = firstEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(firstEmployee.DateTo) : DateTime.UtcNow;
 
             DateTime secondEmployeeFrom = DateTime.Parse(secondEmployee.DateFrom);
-            DateTime secondEmployeeDateTo = secondEmployee.DateTo != "" ? DateTime.Parse(secondEmployee.DateTo) : DateTime.UtcNow;
+            DateTime secondEmployeeDateTo = secondEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(secondEmployee.DateTo) : DateTime.UtcNow;
 
+            //check if first employee work within second employee period
             if (firstEmployeeDateFrom >= secondEmployeeFrom && firstEmployeeDateFrom <= secondEmployeeDateTo)
             {
                 if (firstEmployeeDateTo <= secondEmployeeDateTo) 
@@ -91,6 +87,7 @@ namespace EmployeesPairWork.Services
                 return (int)(secondEmployeeDateTo - firstEmployeeDateFrom).TotalDays + Constants.AddDayToCorrectValue;
             }
 
+            //check if second employee work within first employee period
             if (secondEmployeeFrom >= firstEmployeeDateFrom && secondEmployeeFrom <= firstEmployeeDateTo)
             {
                 if (secondEmployeeDateTo <= firstEmployeeDateTo) 
