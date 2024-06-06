@@ -71,11 +71,11 @@ namespace EmployeesPairWork.Services
         /// <returns></returns>
         private async Task<int> HasWorkAtSameTime(CsvMappingModel firstEmployee, CsvMappingModel secondEmployee)
         {
-            DateTime firstEmployeeDateFrom = DateTime.Parse(firstEmployee.DateFrom);
-            DateTime firstEmployeeDateTo = firstEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(firstEmployee.DateTo) : DateTime.UtcNow;
+            DateTime firstEmployeeDateFrom = DateTime.Parse(firstEmployee.DateFrom).Date;
+            DateTime firstEmployeeDateTo = firstEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(firstEmployee.DateTo) : DateTime.UtcNow.Date;
 
-            DateTime secondEmployeeFrom = DateTime.Parse(secondEmployee.DateFrom);
-            DateTime secondEmployeeDateTo = secondEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(secondEmployee.DateTo) : DateTime.UtcNow;
+            DateTime secondEmployeeFrom = DateTime.Parse(secondEmployee.DateFrom).Date;
+            DateTime secondEmployeeDateTo = secondEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(secondEmployee.DateTo) : DateTime.UtcNow.Date;
 
             //check if first employee work within second employee period
             if (firstEmployeeDateFrom >= secondEmployeeFrom && firstEmployeeDateFrom <= secondEmployeeDateTo)

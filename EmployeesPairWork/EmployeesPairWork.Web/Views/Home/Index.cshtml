@@ -5,24 +5,23 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
 <div class="text-center">
     <form asp-controller="Home" asp-action="Index" enctype="multipart/form-data" method="post">
-        <div class="row">
-            <div class="col-2">
-            </div>
-            <div class="col-4">
-                <input class="form-control" type="file" asp-for="FormFile">
-            </div>
-            <div class="col-4" style="margin-left:-10px">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
+        <div>New CSV file:</div>
+        <div>
+            <input type="file" asp-for="FormFile">
         </div>
+        <p><input type="submit" value="Upload"></p>
     </form>
+
     <br>
+
     <div>
         @if (Model != null && Model.Employees != null && Model.Employees.Count != 0)
         {
-            <partial name="_ListEmployeesPartialView" model=@Model.Employees/>
+            <partial name="_ListEmployeesPartialView" model=@Model.Employees />
         }
     </div>
 </div>
