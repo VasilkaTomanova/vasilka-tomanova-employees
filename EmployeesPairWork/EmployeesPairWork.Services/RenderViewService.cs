@@ -1,4 +1,5 @@
 ﻿
+using EmployeesPairWork.Library;
 using EmployeesPairWork.Models;
 
 namespace EmployeesPairWork.Services
@@ -36,7 +37,8 @@ namespace EmployeesPairWork.Services
                     for (int j = i + 1; j < currProject.ProjectEmployees.Count; j++)
                     {
                         CsvMappingModel currentSecondEmployee = currProject.ProjectEmployees[j];
-                        if (!await HasWorkAtSameTime(currentFirstEmployee, currentSecondEmployee))
+                        int commonTimeWork =await HasWorkAtSameTime(currentFirstEmployee, currentSecondEmployee);
+                        if (commonTimeWork == Constants.NoPairWorkValue)
                         {
                             continue;
                         }
@@ -55,8 +57,7 @@ namespace EmployeesPairWork.Services
                         currentItemToAdd.CommonProjects.Add(new CommonProjectVIewModel
                         {
                             ProjectID = currProject.ProjectID,
-                            //TODO common work time !!!!!! NB
-                            CommonWorkDuration = 0
+                            CommonWorkDuration = commonTimeWork
                         });
                     }
                 }
@@ -66,13 +67,14 @@ namespace EmployeesPairWork.Services
             return filteredEMployees;
         }
 
+
         /// <summary>
-        /// Return whether given two employees work at same time of current project
+        /// Return how many days given two employees work at same time of current project
         /// </summary>
         /// <param name="firstEmployee"></param>
         /// <param name="secondEmployee"></param>
         /// <returns></returns>
-        private async Task<bool> HasWorkAtSameTime(CsvMappingModel firstEmployee, CsvMappingModel secondEmployee)
+        private async Task<int> HasWorkAtSameTime(CsvMappingModel firstEmployee, CsvMappingModel secondEmployee)
         {
             DateTime firstEmployeeDateFrom = DateTime.Parse(firstEmployee.DateFrom);
             DateTime firstEmployeeDateTo = firstEmployee.DateTo != "" ? DateTime.Parse(firstEmployee.DateTo) : DateTime.UtcNow;
@@ -82,26 +84,24 @@ namespace EmployeesPairWork.Services
 
             if (firstEmployeeDateFrom >= secondEmployeeFrom && firstEmployeeDateFrom <= secondEmployeeDateTo)
             {
-                return true;
+                if (firstEmployeeDateTo <= secondEmployeeDateTo) 
+                {
+                    return (int)(firstEmployeeDateTo - firstEmployeeDateFrom).TotalDays + Constants.AddDayToCorrectValue;
+                }
+                return (int)(secondEmployeeDateTo - firstEmployeeDateFrom).TotalDays + Constants.AddDayToCorrectValue;
             }
 
             if (secondEmployeeFrom >= firstEmployeeDateFrom && secondEmployeeFrom <= firstEmployeeDateTo)
             {
-                return true;
+                if (secondEmployeeDateTo <= firstEmployeeDateTo) 
+                {
+                    return (int)(secondEmployeeDateTo-secondEmployeeFrom).TotalDays + Constants.AddDayToCorrectValue;
+                }
+                return (int)(firstEmployeeDateTo - secondEmployeeFrom).TotalDays + Constants.AddDayToCorrectValue;
             }
 
-            //if ((DateTime.Parse(firstEmployee.DateFrom) >= secondEmployeeDateTo
-            //    && DateTime.Parse(firstEmployee.DateFrom) <= secondEmployeeDateTo)
-            //    ||
-            //    (DateTime.Parse(secondEmployee.DateFrom) >= firstEmployeeDateTo
-            //    && DateTime.Parse(secondEmployee.DateFrom) <= firstEmployeeDateTo))
-            //{
-            //    return true;
-            //}
-
-            return false;
+            return Constants.NoPairWorkValue;
         }
-
 
     }
 }
