@@ -1,0 +1,27 @@
+﻿@using EmployeesPairWork.Models
+@model ICollection<PairViewModel>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().FirstEmployee)</th>
+            <th>@Html.DisplayNameFor(model => model.First().SecondEmployee)</th>
+            <th>@Html.DisplayNameFor(model => model.First().CommonProjects.First().ProjectID)</th>
+            <th>@Html.DisplayNameFor(model => model.First().CommonProjects.First().CommonWorkDuration)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @Model)
+        {
+            @foreach (var item2 in item.CommonProjects)
+            {
+                <tr>
+                    <td>@item.FirstEmployee</td>
+                    <td>@item.SecondEmployee</td>
+                    <td>@item2.ProjectID</td>
+                    <td>@item2.CommonWorkDuration</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

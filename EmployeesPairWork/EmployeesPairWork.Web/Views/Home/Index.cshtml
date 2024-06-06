@@ -22,34 +22,7 @@
     <div>
         @if (Model != null && Model.Employees != null && Model.Employees.Count != 0)
         {
-
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>@Html.DisplayNameFor(model => model.Employees.First().FirstEmployee)</th>
-                        <th>@Html.DisplayNameFor(model => model.Employees.First().SecondEmployee)</th>
-                        <th>@Html.DisplayNameFor(model => model.Employees.First().CommonProjects.First().ProjectID)</th>
-                        <th>@Html.DisplayNameFor(model => model.Employees.First().CommonProjects.First().CommonWorkDuration)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in @Model.Employees)
-                    {
-                        @foreach (var item2 in item.CommonProjects)
-                        {
-                            <tr>
-                                <td>@item.FirstEmployee</td>
-                                <td>@item.SecondEmployee</td>
-                                <td>@item2.ProjectID</td>
-                                <td>@item2.CommonWorkDuration</td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-
+            <partial name="_ListEmployeesPartialView" model=@Model.Employees/>
         }
-
     </div>
-
 </div>
