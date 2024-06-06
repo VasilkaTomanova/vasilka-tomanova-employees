@@ -31,6 +31,14 @@ namespace EmployeesPairWork.Services
         }
 
 
+
+
+
+        /// <summary>
+        /// Filter aleady readed from file employees by project and time
+        /// </summary>
+        /// <param name="employeesFromFile"></param>
+        /// <returns></returns>
         private async Task<List<PairViewModel>> FilterPairProjectEmployees(List<CsvMappingModel> employeesFromFile)
         {
             var groupedByProject = employeesFromFile.GroupBy(p => p.ProjectID, (key, g) =>
@@ -43,21 +51,25 @@ namespace EmployeesPairWork.Services
             {
                 for (int i = 0; i < currProject.ProjectEmployees.Count; i++)
                 {
-                    string currentFirstEmployee = currProject.ProjectEmployees[i].EmpID;
-                    for (int j = i+1; j < currProject.ProjectEmployees.Count; j++)
+                    CsvMappingModel currentFirstEmployee = currProject.ProjectEmployees[i];
+                    string currentFirstEmployeeName = currentFirstEmployee.EmpID;
+                    for (int j = i + 1; j < currProject.ProjectEmployees.Count; j++)
                     {
-                        string currentSecondEmployee = currProject.ProjectEmployees[j].EmpID;
-                        //TODO filter whether they work together!!!! NB
-                        //!!!!!!!!!
+                        CsvMappingModel currentSecondEmployee = currProject.ProjectEmployees[j];    
+                        if (!await HasWorkAtSameTime(currentFirstEmployee, currentSecondEmployee))
+                        {
+                            continue;
+                        }
+                        string currentSecondEmployeeName = currentSecondEmployee.EmpID;
                         PairViewModel? currentItemToAdd = filteredEMployees
-                                                           .Where(x => (x.FirstEmployee == currentFirstEmployee && x.SecondEmployee == currentSecondEmployee)
-                                                           || (x.FirstEmployee == currentSecondEmployee && x.SecondEmployee == currentFirstEmployee))
+                                                           .Where(x => (x.FirstEmployee == currentFirstEmployeeName && x.SecondEmployee == currentSecondEmployeeName)
+                                                           || (x.FirstEmployee == currentSecondEmployeeName && x.SecondEmployee == currentFirstEmployeeName))
                                                            .FirstOrDefault();
                         if (currentItemToAdd == null)
                         {
                             currentItemToAdd = new PairViewModel();
-                            currentItemToAdd.FirstEmployee = currentFirstEmployee;
-                            currentItemToAdd.SecondEmployee = currentSecondEmployee;
+                            currentItemToAdd.FirstEmployee = currentFirstEmployeeName;
+                            currentItemToAdd.SecondEmployee = currentSecondEmployeeName;
                             filteredEMployees.Add(currentItemToAdd);
                         }
                         currentItemToAdd.CommonProjects.Add(new CommonProjectVIewModel
@@ -74,6 +86,30 @@ namespace EmployeesPairWork.Services
             return filteredEMployees;
         }
 
+
+
+        /// <summary>
+        /// Return whether given two employees work at same time of current project
+        /// </summary>
+        /// <param name="firstEmployee"></param>
+        /// <param name="secondEmployee"></param>
+        /// <returns></returns>
+        private async Task<bool> HasWorkAtSameTime(CsvMappingModel firstEmployee, CsvMappingModel secondEmployee)
+        {
+            DateTime firstEmployeeDateTo = firstEmployee.DateTo != "" ? DateTime.Parse(firstEmployee.DateTo) : DateTime.UtcNow;
+            DateTime secondEmployeeDateTo = secondEmployee.DateTo != "" ? DateTime.Parse(secondEmployee.DateTo) : DateTime.UtcNow;
+
+            if ((DateTime.Parse(firstEmployee.DateFrom) >= secondEmployeeDateTo
+                && DateTime.Parse(firstEmployee.DateFrom) <= secondEmployeeDateTo)
+                ||
+                (DateTime.Parse(secondEmployee.DateFrom) >= firstEmployeeDateTo
+                && DateTime.Parse(secondEmployee.DateFrom) <= firstEmployeeDateTo))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
     }
 }
