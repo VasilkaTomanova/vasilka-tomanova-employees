@@ -1,6 +1,7 @@
 ﻿
 using EmployeesPairWork.Library;
 using EmployeesPairWork.Models;
+using System.Globalization;
 
 namespace EmployeesPairWork.Services
 {
@@ -21,7 +22,7 @@ namespace EmployeesPairWork.Services
         {
             var groupedByProject = employeesFromFile.GroupBy(p => p.ProjectID, (key, g) =>
                                                     new { ProjectID = key, ProjectEmployees = g.ToList() })
-                                                    .Where(x=>x.ProjectEmployees.Count >= Constants.MinValueForPair)
+                                                    .Where(x => x.ProjectEmployees.Count >= Constants.MinValueForPair)
                                                     .ToList();
 
             List<PairViewModel> filteredEMployees = new List<PairViewModel>();
@@ -34,7 +35,7 @@ namespace EmployeesPairWork.Services
                     for (int j = i + 1; j < currProject.ProjectEmployees.Count; j++)
                     {
                         CsvMappingModel currentSecondEmployee = currProject.ProjectEmployees[j];
-                        int commonTimeWork =await HasWorkAtSameTime(currentFirstEmployee, currentSecondEmployee);
+                        int commonTimeWork = await HasWorkAtSameTime(currentFirstEmployee, currentSecondEmployee);
                         if (commonTimeWork == Constants.NoPairWorkValue)
                         {
                             continue;
@@ -71,16 +72,39 @@ namespace EmployeesPairWork.Services
         /// <returns></returns>
         private async Task<int> HasWorkAtSameTime(CsvMappingModel firstEmployee, CsvMappingModel secondEmployee)
         {
-            DateTime firstEmployeeDateFrom = DateTime.Parse(firstEmployee.DateFrom).Date;
-            DateTime firstEmployeeDateTo = firstEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(firstEmployee.DateTo) : DateTime.UtcNow.Date;
+            DateTime firstEmployeeDateFrom;
+            DateTime firstEmployeeDateTo;
+            DateTime secondEmployeeFrom;
+            DateTime secondEmployeeDateTo;
 
-            DateTime secondEmployeeFrom = DateTime.Parse(secondEmployee.DateFrom).Date;
-            DateTime secondEmployeeDateTo = secondEmployee.DateTo != Constants.NullValueForDateTo ? DateTime.Parse(secondEmployee.DateTo) : DateTime.UtcNow.Date;
+            DateTime.TryParseExact(firstEmployee.DateFrom, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+                                    DateTimeStyles.None, out firstEmployeeDateFrom);
+            if (firstEmployee.DateTo != Constants.NullValueForDateTo)
+            {
+                DateTime.TryParseExact(firstEmployee.DateTo, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+                                   DateTimeStyles.None, out firstEmployeeDateTo);
+            }
+            else
+            {
+                firstEmployeeDateTo = DateTime.Now.Date;
+            }
 
+            DateTime.TryParseExact(secondEmployee.DateFrom, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+                                  DateTimeStyles.None, out secondEmployeeFrom);
+            if (secondEmployee.DateTo != Constants.NullValueForDateTo)
+            {
+                DateTime.TryParseExact(secondEmployee.DateTo, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+                                 DateTimeStyles.None, out secondEmployeeDateTo);
+            }
+            else 
+            {
+                secondEmployeeDateTo = DateTime.Now.Date;
+            }
+ 
             //check if first employee work within second employee period
             if (firstEmployeeDateFrom >= secondEmployeeFrom && firstEmployeeDateFrom <= secondEmployeeDateTo)
             {
-                if (firstEmployeeDateTo <= secondEmployeeDateTo) 
+                if (firstEmployeeDateTo <= secondEmployeeDateTo)
                 {
                     return (int)(firstEmployeeDateTo - firstEmployeeDateFrom).TotalDays + Constants.AddDayToCorrectValue;
                 }
@@ -90,9 +114,9 @@ namespace EmployeesPairWork.Services
             //check if second employee work within first employee period
             if (secondEmployeeFrom >= firstEmployeeDateFrom && secondEmployeeFrom <= firstEmployeeDateTo)
             {
-                if (secondEmployeeDateTo <= firstEmployeeDateTo) 
+                if (secondEmployeeDateTo <= firstEmployeeDateTo)
                 {
-                    return (int)(secondEmployeeDateTo-secondEmployeeFrom).TotalDays + Constants.AddDayToCorrectValue;
+                    return (int)(secondEmployeeDateTo - secondEmployeeFrom).TotalDays + Constants.AddDayToCorrectValue;
                 }
                 return (int)(firstEmployeeDateTo - secondEmployeeFrom).TotalDays + Constants.AddDayToCorrectValue;
             }
