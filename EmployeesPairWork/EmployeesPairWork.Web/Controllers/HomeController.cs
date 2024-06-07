@@ -33,6 +33,10 @@ namespace EmployeesPairWork.Web.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return View();
+                }
                 List<CsvMappingModel> fileResult = await _fileService.GetAllRowsFromFile(input);
                 List<PairViewModel> viewResult = await _renderService.GetFilteredEmpoyees(fileResult);
                 input.Employees = viewResult;
@@ -42,7 +46,7 @@ namespace EmployeesPairWork.Web.Controllers
             {
                 return RedirectToAction(nameof(HomeController.Error));
             }
-          
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

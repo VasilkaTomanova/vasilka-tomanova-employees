@@ -11,8 +11,12 @@
     <form asp-controller="Home" asp-action="Index" enctype="multipart/form-data" method="post" class="formUploadFile">
         <div>New CSV file:</div>
         <div>
-            <input type="file" asp-for="FormFile">
+            <input type="file" asp-for="FormFile" required>
+            <div class="invalid-tooltip">
+            Please provide a valid city.
         </div>
+        </div>
+         
         <p><input type="submit" value="Upload"></p>
     </form>
 
