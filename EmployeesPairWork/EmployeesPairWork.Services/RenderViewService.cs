@@ -79,7 +79,7 @@ namespace EmployeesPairWork.Services
 
             DateTime.TryParseExact(firstEmployee.DateFrom.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                     DateTimeStyles.None, out firstEmployeeDateFrom);
-            if (firstEmployee.DateTo != Constants.NullValueForDateTo)
+            if (firstEmployee.DateTo.ToLower() != Constants.NullValueForDateTo && firstEmployee.DateTo != Constants.EmptyValueForDateTo)
             {
                 DateTime.TryParseExact(firstEmployee.DateTo.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                    DateTimeStyles.None, out firstEmployeeDateTo);
@@ -91,7 +91,7 @@ namespace EmployeesPairWork.Services
 
             DateTime.TryParseExact(secondEmployee.DateFrom.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                   DateTimeStyles.None, out secondEmployeeFrom);
-            if (secondEmployee.DateTo != Constants.NullValueForDateTo)
+            if (secondEmployee.DateTo.ToLower() != Constants.NullValueForDateTo && secondEmployee.DateTo != Constants.EmptyValueForDateTo)
             {
                 DateTime.TryParseExact(secondEmployee.DateTo.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                  DateTimeStyles.None, out secondEmployeeDateTo);

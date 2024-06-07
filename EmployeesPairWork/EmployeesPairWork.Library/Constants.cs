@@ -11,7 +11,9 @@ namespace EmployeesPairWork.Library
 
         public const int MinValueForPair = 2;
 
-        public const string NullValueForDateTo = "";
+        public const string EmptyValueForDateTo = "";
+
+        public const string NullValueForDateTo = "null";
 
     }
 }
