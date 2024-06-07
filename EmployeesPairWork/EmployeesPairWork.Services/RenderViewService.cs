@@ -20,7 +20,7 @@ namespace EmployeesPairWork.Services
         /// <returns></returns>
         private async Task<List<PairViewModel>> FilterPairProjectEmployees(List<CsvMappingModel> employeesFromFile)
         {
-            var groupedByProject = employeesFromFile.GroupBy(p => p.ProjectID, (key, g) =>
+            var groupedByProject = employeesFromFile.GroupBy(p => p.ProjectID.Trim(), (key, g) =>
                                                     new { ProjectID = key, ProjectEmployees = g.ToList() })
                                                     .Where(x => x.ProjectEmployees.Count >= Constants.MinValueForPair)
                                                     .ToList();
@@ -31,7 +31,7 @@ namespace EmployeesPairWork.Services
                 for (int i = 0; i < currProject.ProjectEmployees.Count; i++)
                 {
                     CsvMappingModel currentFirstEmployee = currProject.ProjectEmployees[i];
-                    string currentFirstEmployeeName = currentFirstEmployee.EmpID;
+                    string currentFirstEmployeeName = currentFirstEmployee.EmpID.Trim();
                     for (int j = i + 1; j < currProject.ProjectEmployees.Count; j++)
                     {
                         CsvMappingModel currentSecondEmployee = currProject.ProjectEmployees[j];
@@ -40,7 +40,7 @@ namespace EmployeesPairWork.Services
                         {
                             continue;
                         }
-                        string currentSecondEmployeeName = currentSecondEmployee.EmpID;
+                        string currentSecondEmployeeName = currentSecondEmployee.EmpID.Trim();
                         PairViewModel? currentItemToAdd = filteredEMployees
                                                            .Where(x => (x.FirstEmployee == currentFirstEmployeeName && x.SecondEmployee == currentSecondEmployeeName)
                                                            || (x.FirstEmployee == currentSecondEmployeeName && x.SecondEmployee == currentFirstEmployeeName))
@@ -77,11 +77,11 @@ namespace EmployeesPairWork.Services
             DateTime secondEmployeeFrom;
             DateTime secondEmployeeDateTo;
 
-            DateTime.TryParseExact(firstEmployee.DateFrom, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+            DateTime.TryParseExact(firstEmployee.DateFrom.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                     DateTimeStyles.None, out firstEmployeeDateFrom);
             if (firstEmployee.DateTo != Constants.NullValueForDateTo)
             {
-                DateTime.TryParseExact(firstEmployee.DateTo, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+                DateTime.TryParseExact(firstEmployee.DateTo.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                    DateTimeStyles.None, out firstEmployeeDateTo);
             }
             else
@@ -89,11 +89,11 @@ namespace EmployeesPairWork.Services
                 firstEmployeeDateTo = DateTime.Now.Date;
             }
 
-            DateTime.TryParseExact(secondEmployee.DateFrom, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+            DateTime.TryParseExact(secondEmployee.DateFrom.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                   DateTimeStyles.None, out secondEmployeeFrom);
             if (secondEmployee.DateTo != Constants.NullValueForDateTo)
             {
-                DateTime.TryParseExact(secondEmployee.DateTo, DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
+                DateTime.TryParseExact(secondEmployee.DateTo.Trim(), DatetimeFormats.AllFormats, CultureInfo.InvariantCulture,
                                  DateTimeStyles.None, out secondEmployeeDateTo);
             }
             else 
